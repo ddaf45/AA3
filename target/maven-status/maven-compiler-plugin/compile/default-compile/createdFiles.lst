@@ -1,0 +1,12 @@
+com\mibiblioteca\digital\entity\Libro.class
+com\mibiblioteca\digital\repository\LibroRepository.class
+com\mibiblioteca\digital\controller\AuthController.class
+com\mibiblioteca\digital\entity\Usuario.class
+com\mibiblioteca\digital\MiBibliotecaDigital.class
+com\mibiblioteca\digital\service\LibroService.class
+com\mibiblioteca\digital\service\UsuarioService.class
+com\mibiblioteca\digital\security\UserDetailsServiceImpl.class
+com\mibiblioteca\digital\security\WebSecurityConfig.class
+com\mibiblioteca\digital\repository\UsuarioRepository.class
+com\mibiblioteca\digital\controller\LibroController.class
+com\mibiblioteca\digital\service\UsuarioServiceImpl.class
