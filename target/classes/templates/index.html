@@ -1,11 +1,63 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
 <head>
-    <title>Página Principal</title>
+    <title>Bienvenido a Mi Biblioteca Digital</title>
 </head>
 <body>
-    <h1>Bienvenido!</h1>
-    <p>Esta es la página principal.</p>
-    <p><a th:href="@{/logout}">Cerrar Sesión</a></p>
+    <div layout:fragment="content">
+        <h1 class="mt-4">Bienvenido a Mi Biblioteca Digital</h1>
+        <p class="lead">Gestiona tus libros de forma eficiente.</p>
+        <p>Utiliza la barra de navegación para explorar los libros.</p>
+
+        <div sec:authorize="!isAuthenticated()">
+            <div class="card mt-4 p-4 text-center">
+                <h3 class="card-title">Inicia Sesión o Regístrate</h3>
+                <p class="card-text">Para acceder a todas las funcionalidades, como agregar, editar o eliminar libros, por favor inicia sesión.</p>
+                <div class="d-grid gap-2 col-6 mx-auto">
+                    <a th:href="@{/login}" class="btn btn-primary btn-lg mt-3">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
+                    </a>
+                    <a th:href="@{/registro}" class="btn btn-outline-secondary btn-lg mt-2">
+                        <i class="bi bi-person-plus me-2"></i> Registrarme
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div sec:authorize="isAuthenticated()">
+            <div class="card mt-4 p-4 text-center">
+                <h3 class="card-title">¡Bienvenido de nuevo, <span sec:authentication="name">Usuario</span>!</h3>
+                <p class="card-text">Estás listo para gestionar tu biblioteca.</p>
+                <div class="d-grid gap-2 col-6 mx-auto">
+                    <a th:href="@{/libros}" class="btn btn-success btn-lg mt-3">
+                        <i class="bi bi-book me-2"></i> Ver y Gestionar Libros
+                    </a>
+                    <a th:href="@{/libros/nuevo}" class="btn btn-outline-info btn-lg mt-2">
+                        <i class="bi bi-plus-circle me-2"></i> Añadir Nuevo Libro
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                Información Adicional
+            </div>
+            <div class="card-body">
+                <p>Este es un proyecto de ejemplo que demuestra la gestión de una biblioteca con Spring Boot, Spring Security, H2 y Thymeleaf.</p>
+                <p>Puedes:</p>
+                <ul>
+                    <li>Ver la lista de libros disponibles.</li>
+                    <li sec:authorize="!isAuthenticated()">Registrarte como nuevo usuario.</li>
+                    <li sec:authorize="!isAuthenticated()">Iniciar sesión para acceder a más funcionalidades.</li>
+                    <li sec:authorize="isAuthenticated()">Agregar, editar o eliminar libros.</li>
+                </ul>
+                <a th:href="@{/libros}" class="btn btn-info">Ver Libros (acceso público)</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

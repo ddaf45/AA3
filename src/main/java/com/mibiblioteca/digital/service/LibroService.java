@@ -34,15 +34,24 @@ public class LibroService {
     }
 
     public Libro actualizarLibro(Long id, Libro libroActualizado) {
-        Optional<Libro> libroExistente = libroRepository.findById(id);
-        if (libroExistente.isPresent()) {
-            Libro libro = libroExistente.get();
+        Optional<Libro> libroExistenteOpt = libroRepository.findById(id);
+        if (libroExistenteOpt.isPresent()) {
+            Libro libro = libroExistenteOpt.get();
+
+            // Validar ISBN único al actualizar:
+            // Solo si el ISBN ha cambiado Y ya existe un libro con ese nuevo ISBN (y no es el mismo libro que estamos actualizando)
+            if (libroActualizado.getIsbn() != null && !libroActualizado.getIsbn().equals(libro.getIsbn())) {
+                if (libroRepository.existsByIsbn(libroActualizado.getIsbn())) {
+                    throw new IllegalArgumentException("Ya existe otro libro con el ISBN: " + libroActualizado.getIsbn());
+                }
+            }
+
             libro.setTitulo(libroActualizado.getTitulo());
             libro.setAutor(libroActualizado.getAutor());
             libro.setIsbn(libroActualizado.getIsbn());
             libro.setAnioPublicacion(libroActualizado.getAnioPublicacion());
             libro.setGenero(libroActualizado.getGenero());
-            // Podrías añadir más lógica de validación o transformación aquí
+
             return libroRepository.save(libro);
         } else {
             throw new IllegalArgumentException("Libro con ID " + id + " no encontrado para actualizar.");

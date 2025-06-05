@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${libro.id == null ? 'Nuevo Libro' : 'Editar Libro'}"></title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1 class="mt-4" th:text="${libro.id == null ? 'Agregar Nuevo Libro' : 'Editar Libro'}"></h1>
+
+        <div th:if="${mensajeError}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${mensajeError}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <form th:action="${libro.id == null ? '/libros/guardar' : '/libros/actualizar/' + libro.id}" th:object="${libro}" method="post">
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Título:</label>
+                <input type="text" class="form-control" id="titulo" th:field="*{titulo}" required="required">
+            </div>
+            <div class="mb-3">
+                <label for="autor" class="form-label">Autor:</label>
+                <input type="text" class="form-control" id="autor" th:field="*{autor}">
+            </div>
+            <div class="mb-3">
+                <label for="isbn" class="form-label">ISBN:</label>
+                <input type="text" class="form-control" id="isbn" th:field="*{isbn}" maxlength="13">
+            </div>
+            <div class="mb-3">
+                <label for="anioPublicacion" class="form-label">Año de Publicación:</label>
+                <input type="number" class="form-control" id="anioPublicacion" th:field="*{anioPublicacion}">
+            </div>
+            <div class="mb-3">
+                <label for="genero" class="form-label">Género:</label>
+                <input type="text" class="form-control" id="genero" th:field="*{genero}">
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Libro</button>
+            <a th:href="@{/libros}" class="btn btn-secondary">Cancelar y Volver a Libros</a>
+        </form>
+
+        <div class="mt-3">
+            <a th:href="@{/}" class="btn btn-info"><i class="bi bi-arrow-left-circle me-2"></i> Volver al Inicio</a>
+        </div>
+    </div>
+</body>
+</html>
