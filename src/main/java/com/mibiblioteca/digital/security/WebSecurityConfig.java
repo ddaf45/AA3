@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher; // Importar AntPathRequestMatcher
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
@@ -29,7 +30,11 @@ public class WebSecurityConfig {
                         .loginPage("/login")
                         .permitAll()
                 )
-                .logout((logout) -> logout.permitAll())
+                .logout((logout) -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // Asegura que solo /logout active el logout
+                        .logoutSuccessUrl("/?logout") // Redirige a la raíz con un parámetro 'logout'
+                        .permitAll()
+                )
                 .csrf((csrf) -> csrf.ignoringRequestMatchers("/h2-console/**")) // Ignorar CSRF para la consola H2
                 .headers((headers) -> headers.frameOptions((frame) -> frame.sameOrigin())); // Habilitar frames para H2 Console
 

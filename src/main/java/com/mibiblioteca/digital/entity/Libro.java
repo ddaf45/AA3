@@ -26,7 +26,7 @@ public class Libro {
     @Column(name = "autor", length = 100)
     private String autor;
 
-    @Column(name = "isbn", unique = true, length = 13) // unique=true: asegura que el ISBN sea único en la tabla
+    @Column(name = "isbn", unique = true, length = 17) // unique=true: asegura que el ISBN sea único en la tabla
     private String isbn;
 
     @Column(name = "anio_publicacion") // Hibernate convierte a snake_case por defecto, pero se puede especificar

@@ -1,69 +1,427 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      layout:decorate="~{layout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Libros</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #fdbb2d 0%, #22c1c3 100%);
+            --danger-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .container {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .main-card:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-2px);
+        }
+
+        h2 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        .alert {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            color: #0c5460;
+        }
+
+        .btn {
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.6);
+        }
+
+        .btn-outline-success {
+            background: var(--success-gradient);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(74, 172, 254, 0.4);
+        }
+
+        .btn-outline-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 172, 254, 0.6);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(253, 187, 45, 0.4);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(253, 187, 45, 0.6);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-gradient);
+            color: #721c24;
+            box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 154, 158, 0.6);
+            color: #721c24;
+        }
+
+        .btn-action {
+            margin-right: 8px;
+            padding: 6px 12px;
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            background: white;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.5px;
+            padding: 18px 15px;
+            border: none;
+            position: relative;
+        }
+
+        .table th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+            border-color: rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.02) 0%, rgba(118, 75, 162, 0.02) 100%);
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .controls-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .table-container {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .btn i {
+            margin-right: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #dee2e6;
+        }
+
+        @media (max-width: 768px) {
+            .controls-section {
+                padding: 15px;
+            }
+            
+            .search-form {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-form .form-control {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .btn-action {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div layout:fragment="content">
-        <h1 class="mt-4">Lista de Libros</h1>
+    <div class="container">
+        <div class="main-card">
+            <h2><i class="fas fa-book-open"></i> Lista de Libros</h2>
 
-        <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <span th:text="${mensajeExito}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <div th:if="${mensajeError}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <span th:text="${mensajeError}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+            <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${mensajeExito}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div th:if="${mensajeError}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span th:text="${mensajeError}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-        <div class="mb-3 d-flex justify-content-between align-items-center">
-            <form th:action="@{/libros/buscar}" method="get" class="d-flex">
-                <input type="text" name="query" class="form-control me-2" placeholder="Buscar por título o autor" th:value="${param.query}">
-                <button type="submit" class="btn btn-outline-primary">Buscar</button>
-            </form>
-            <a th:href="@{/libros/nuevo}" class="btn btn-primary" sec:authorize="isAuthenticated()">Agregar Nuevo Libro</a>
-        </div>
+            <div class="controls-section">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <a th:href="@{/libros/nuevo}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Añadir Nuevo Libro
+                        </a>
+                        <a th:href="@{/}" class="btn btn-secondary ml-2">
+                            <i class="fas fa-home"></i> Volver al Inicio
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <form th:action="@{/libros/buscar}" method="get" class="search-form justify-content-end">
+                            <input type="text" name="query" class="form-control" placeholder="🔍 Buscar por título o autor" th:value="${param.query}">
+                            <button type="submit" class="btn btn-outline-success">
+                                <i class="fas fa-search"></i> Buscar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
+            <div th:if="${libros.isEmpty()}" class="empty-state">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <h4>No hay libros registrados</h4>
+                        <p>Comienza agregando tu primer libro a la biblioteca</p>
+                    </div>
+                </div>
+            </div>
 
-        <div th:if="${libros.isEmpty()}" class="alert alert-info" role="alert">
-            No hay libros disponibles.
-        </div>
-
-        <div th:unless="${libros.isEmpty()}" class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Título</th>
-                        <th>Autor</th>
-                        <th>ISBN</th>
-                        <th>Año Publicación</th>
-                        <th>Género</th>
-                        <th sec:authorize="isAuthenticated()">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="libro : ${libros}">
-                        <td th:text="${libro.titulo}"></td>
-                        <td th:text="${libro.autor}"></td>
-                        <td th:text="${libro.isbn}"></td>
-                        <td th:text="${libro.anioPublicacion}"></td>
-                        <td th:text="${libro.genero}"></td>
-                        <td sec:authorize="isAuthenticated()">
-                            <a th:href="@{/libros/editar/{id}(id=${libro.id})}" class="btn btn-sm btn-warning btn-action">Editar</a>
-                            <a th:href="@{/libros/eliminar/{id}(id=${libro.id})}" class="btn btn-sm btn-danger btn-action"
-                               onclick="return confirm('¿Estás seguro de que quieres eliminar este libro?');">Eliminar</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="mt-4">
-            <a th:href="@{/}" class="btn btn-secondary"><i class="bi bi-arrow-left-circle me-2"></i> Volver al Inicio</a>
+            <div th:unless="${libros.isEmpty()}" class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> ID</th>
+                            <th><i class="fas fa-book"></i> Título</th>
+                            <th><i class="fas fa-user"></i> Autor</th>
+                            <th><i class="fas fa-barcode"></i> ISBN</th>
+                            <th><i class="fas fa-calendar"></i> Año Publicación</th>
+                            <th><i class="fas fa-tags"></i> Género</th>
+                            <th><i class="fas fa-cogs"></i> Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="libro : ${libros}">
+                            <td th:text="${libro.id}"></td>
+                            <td th:text="${libro.titulo}"></td>
+                            <td th:text="${libro.autor}"></td>
+                            <td th:text="${libro.isbn}"></td>
+                            <td th:text="${libro.anioPublicacion}"></td>
+                            <td th:text="${libro.genero}"></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a th:href="@{/libros/editar/{id}(id=${libro.id})}" class="btn btn-warning btn-sm btn-action">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+                                    <a th:href="@{/libros/eliminar/{id}(id=${libro.id})}" class="btn btn-danger btn-sm btn-action"
+                                       onclick="return confirm('¿Estás seguro de que quieres eliminar este libro?');">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
